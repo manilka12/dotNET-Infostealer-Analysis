@@ -2,7 +2,7 @@
 
 ### C2 Infrastructure
 - `158.94.208.104` -> This is the initial staging server. It serves the Donut shellcode and the .NET payload. It actively blocks scanners by 302 redirecting them to `cloudflare.com`.
-- `91.92.243.161` (Port 3038) -> This is the final exfiltration server where the stolen data is sent. 
+- `91.92.243.161` (Port 3038) -> This is the final exfiltration server where the stolen data is sent (Raw TCP connection).
 
 ### URLs
 - `http://158.94.208.104/x7GkP2mQ9zL4/my_newest_ll.png` -> Serves the Donut Shellcode Loader (53 KB)
@@ -19,9 +19,11 @@
 - PowerShell calling `Add-Type` to dynamically load C# code that imports `VirtualAlloc` and `CreateThread`. It's a dead giveaway for memory injection.
 - The injector reads `HKCU\Control Panel\International\Geo\Name` to build its HTTP User-Agent. Look for outbound HTTP requests where the User-Agent is just a raw country code (e.g., `US`, `FR`).
 - Outbound requests with the exact User-Agent `powershell` (all lowercase, no version info) hitting suspicious IPs.
-- **Persistence:** Manipulates the Windows Registry (`Registry.LocalMachine.OpenSubKey`) to ensure it runs across reboots.
-- **Evasion:** Loops through running processes (`Process.GetProcesses()`) to detect and terminate analysis tools.
-- **App-Bound Bypass:** Interacts with the Chrome COM `IElevator` service to request decrypted App-Bound keys without needing direct code injection.
+- **Fingerprinting:** Reads `HKLM\HARDWARE\DESCRIPTION\System\CentralProcessor\0\ProcessorNameString` to identify the CPU.
+- **Process Enumeration:** Loops through running processes (`Process.GetProcesses()`) for environment checks.
+- **App-Bound Targeting:** Searches for the Chrome App-Bound shared-memory marker `__AE_SHM_MARKER_`.
+- **Self-Deletion:** Executes a delayed CMD deletion using `ping 1.1.1.1 & del`.
 
 ### Encryption Details
-- The .NET payload encrypts all its strings. The AES key is hardcoded: `B025011E705D8869AE4F29F083465799465EE53648465ECA3E706AC49D7DA7DB`.
+- **String/Constant Obfuscation:** Uses a custom substitution table with shuffled hex decoding and bitwise rotations (787 encoded constants, including 228 strings).
+- **C2 Transport Encryption:** AES-CBC with PKCS#7 padding. The initial bootstrap key is a hardcoded 16-byte value.
