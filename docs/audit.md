@@ -29,9 +29,10 @@
 - **Structure:** `my_s.bin` is a native wrapper that decrypts and loads a heavily obfuscated .NET assembly at offset `0x1ba40`.
 - **Decompilation:** I carved out the .NET PE file and decompiled the MSIL back into C# source code (`decompiled_code.cs`, ~15,000+ lines).
 - **String Encryption:** The source code was practically unreadable. Every single string (URLs, file paths, registry keys) was replaced by a method call pointing to a static class (e.g., `score8794.product625.flag6144.0e291526dfde...`).
-- **Decryption:** The class implements a custom AES decryption routine running at runtime. 
+- **Decryption & Key Extraction:** The class implements a custom AES decryption routine to decode strings at runtime. 
+  - **How the Key Was Found:** By analyzing the decompiled C# code, I located the static constructor for the decryption class. Because the malware decrypts its strings on the fly, the AES key and IV had to be stored in the binary. I found the 256-bit AES key sitting in plain text as a hardcoded byte array right inside the static constructor.
   - **Hardcoded AES Key:** `B025011E705D8869AE4F29F083465799465EE53648465ECA3E706AC49D7DA7DB`
-  - I built a custom Python emulator (`string_decryptor.py`) that successfully processed the malware's decryption logic, ripping out all 127 encrypted strings from the binary.
+  - Using this extracted key, I built a custom Python emulator (`string_decryptor.py`) that successfully processed the malware's decryption logic, ripping out all 127 encrypted strings from the binary.
 
 ## Phase 3: Capabilities & TTPs (Confirmed in Source)
 With the strings decrypted and the source code audited, the true nature of the malware was exposed:
