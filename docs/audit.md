@@ -17,7 +17,7 @@
 - **Conclusion:** The PNG is not an image; it is 53 KB of Donut Shellcode.
 
 ## Phase 1: Shellcode & Injector Module (`stage4.exe`)
-- **Extraction:** The memory region allocated by `VirtualAlloc` was dumped to disk. The shellcode executes a Chaskey-encrypted payload, which decrypts into a 64-bit Windows executable (`stage4.exe`).
+- **Extraction:** The memory region allocated by `VirtualAlloc` was dumped to disk. The shellcode is obfuscated using the **Chaskey Block Cipher** (a lightweight encryption algorithm). Because standard decryption libraries did not support this specific implementation, the entire Chaskey core decryption module had to be manually rewritten in Python (`donut_decrypt.py`). By extracting the 16-byte key and nonce directly from the binary header, the custom Python script successfully decrypted the payload into a 64-bit Windows executable (`stage4.exe`).
 - **Reversing `stage4.exe`:**
   - Dumped strings and analyzed the WinHTTP imports.
   - Found it targets `svchost.exe` and `powershell.exe` for process injection.
