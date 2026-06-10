@@ -1,7 +1,5 @@
 # IoCs
 
-If you're hunting for this, here's what to look for.
-
 ### C2 Infrastructure
 - `158.94.208.104` -> This is the initial staging server. It serves the Donut shellcode and the .NET payload. It actively blocks scanners by 302 redirecting them to `cloudflare.com`.
 - `91.92.243.161` (Port 3038) -> This is the final exfiltration server where the stolen data is sent. 

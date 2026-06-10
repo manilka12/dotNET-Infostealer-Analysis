@@ -1,6 +1,6 @@
 # Malware Analysis Report: Deep Static Analysis
 
-**Analyst:** Antigravity  
+**Analyst:** manilka12  
 **Analysis Type:** Full Static Reverse Engineering (No Execution)  
 **Sample Chain:** `payload.bin` -> `stage4.exe` -> `my_s_real.bin` 
 
@@ -43,7 +43,7 @@ The analyzed malware sample is a sophisticated, multi-stage loader and infosteal
 - **Primary Function:** Comprehensive Information Stealing & Remote Code Execution
 
 **Full Decrypted Configuration & Capabilities:**
-By successfully reverse-engineering the custom string obfuscation routine built into the .NET assembly, we extracted the true configuration and capabilities of the final payload. The malware replaces all strings with method calls that decrypt hardcoded hex ciphertext at runtime using an embedded AES key.
+By successfully reverse-engineering the custom string obfuscation routine built into the .NET assembly, the true configuration and capabilities of the final payload were extracted. The malware replaces all strings with method calls that decrypt hardcoded hex ciphertext at runtime using an embedded AES key.
 
 ### 1. Actual Command & Control (C2) Server
 The final payload stops communicating with `158.94.208.104` and instead shifts to its true operational C2 server:
